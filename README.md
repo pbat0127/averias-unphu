@@ -91,4 +91,4 @@ uploads/  fotos subidas (no se versionan)
 - [Registro de cambios por versión](CHANGELOG.md)
 
 ## Autores
-Grupo 01 — Integrante 1 · Integrante 2 · Integrante 3
+Grupo 01 — Andrea Masini - Daniel Caamaño - Pedro Batista
