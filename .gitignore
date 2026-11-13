@@ -1,0 +1,15 @@
+# Dependencias (se instalan con npm ci)
+node_modules/
+
+# Configuración local con contraseñas: se sube solo .env.example
+.env
+
+# Fotos subidas por los usuarios
+uploads/*
+!uploads/.gitkeep
+
+# Archivos del sistema y configuración local del editor (Cursor / VS Code)
+.DS_Store
+Thumbs.db
+.vscode/
+.cursor/
