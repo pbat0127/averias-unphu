@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const express = require('express');
 const multer = require('multer');
 const { getPool } = require('./db');
-const { validarAveria, validarFoto } = require('./validacion');
+const { validarAveria, validarFoto, MAX_FOTO } = require('./validacion');
 const { ESTADOS, siguientesEstados, validarCambio } = require('./estados');
 const vistas = require('./vistas');
 
@@ -17,9 +17,21 @@ const subida = multer({
   storage: multer.diskStorage({
     destination: CARPETA_FOTOS,
     filename: (req, file, cb) => cb(null, crypto.randomUUID() + (file.mimetype === 'image/png' ? '.png' : '.jpg'))
-  })
+  }),
+  limits: { fileSize: MAX_FOTO }
 });
 app.use('/uploads', express.static(CARPETA_FOTOS));
+
+// Recibe la foto. Si pasa de 2 MB, no la guarda y deja el error para mostrarlo en el formulario.
+function recibirFoto(req, res, next) {
+  subida.single('foto')(req, res, err => {
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      req.errorFoto = 'La foto no puede pesar más de 2 MB.';
+      return next();
+    }
+    next(err);
+  });
+}
 
 app.get('/salud', (req, res) => {
   res.json({ ok: true });
@@ -56,10 +68,11 @@ app.get('/averias/nueva', async (req, res) => {
 });
 
 // Registrar una avería (RF-01), con foto opcional (RF-04).
-app.post('/averias', subida.single('foto'), async (req, res) => {
+app.post('/averias', recibirFoto, async (req, res) => {
   const { errores, datos } = validarAveria(req.body);
   const foto = validarFoto(req.file);
   if (!foto.ok) errores.push(foto.error);
+  if (req.errorFoto) errores.push(req.errorFoto);
   if (errores.length > 0) {
     if (req.file) fs.unlink(req.file.path, () => {});
     return res.status(400).send(vistas.formulario({ ...(await catalogos()), errores, valores: req.body }));
