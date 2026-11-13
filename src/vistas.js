@@ -89,7 +89,7 @@ ${errores.length ? `<div class="errores"><ul>${errores.map(e => `<li>${esc(e)}</
   <label>Reportado por (opcional)
     <input name="reportado_por" value="${esc(valores.reportado_por)}">
   </label>
-  <label>Foto (opcional, JPG o PNG)
+  <label>Foto (opcional, JPG o PNG, máximo 2 MB)
     <input type="file" name="foto" accept="image/jpeg,image/png">
   </label>
   <button type="submit">Guardar</button>
