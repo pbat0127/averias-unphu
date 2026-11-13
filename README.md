@@ -8,6 +8,7 @@ Aplicación web para reportar y dar seguimiento a las averías de las aulas y es
 - Registrar una avería (aula, tipo, descripción) y verla en la lista.
 - Asignar un técnico y cambiar el estado: Reportada → Asignada → En reparación → Cerrada.
 - Filtrar la lista por estado.
+- Adjuntar una foto opcional (JPG o PNG) al reportar la avería.
 
 ## Tecnologías
 - Node.js 22 LTS (ver `.nvmrc`)
@@ -53,6 +54,7 @@ Ejecute los scripts **en este orden**:
 mysql -u root -p < db/01_schema.sql
 mysql -u root -p < db/02_catalogos.sql
 mysql -u root -p < db/03_datos_prueba.sql
+mysql -u root -p < db/04_foto_averia.sql
 ```
 - En **PowerShell** use: `Get-Content db/01_schema.sql | mysql -u root -p` (repita con cada script).
 - También puede abrir cada script en **MySQL Workbench** y ejecutarlo.
@@ -78,12 +80,14 @@ db/      scripts SQL numerados, en el orden en que se ejecutan
 docs/    bitácora, decisiones, cambios y matriz de trazabilidad
 src/     código de la aplicación
 tests/   pruebas automáticas
+uploads/  fotos subidas (no se versionan)
 ```
 
 ## Documentación
 - [Bitácora](docs/bitacora.md)
 - [Decisiones técnicas (ADR)](docs/decisiones/)
 - [Matriz de trazabilidad](docs/trazabilidad.md)
+- [Solicitudes de cambio](docs/cambios.md)
 - [Registro de cambios por versión](CHANGELOG.md)
 
 ## Autores

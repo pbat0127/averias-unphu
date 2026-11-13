@@ -1,4 +1,5 @@
 const MAX_DESCRIPCION = 500;
+const TIPOS_FOTO = ['image/jpeg', 'image/png'];
 
 // Valida los datos del formulario de registro (RF-01).
 // Devuelve { ok, errores, datos } para que la ruta decida qué mostrar.
@@ -23,4 +24,13 @@ function validarAveria(entrada = {}) {
   };
 }
 
-module.exports = { validarAveria, MAX_DESCRIPCION };
+// RF-04 (cambio CR-01): la foto es opcional; si viene, debe ser JPG o PNG.
+function validarFoto(archivo) {
+  if (!archivo) return { ok: true };
+  if (!TIPOS_FOTO.includes(archivo.mimetype)) {
+    return { ok: false, error: 'La foto debe ser JPG o PNG.' };
+  }
+  return { ok: true };
+}
+
+module.exports = { validarAveria, validarFoto, MAX_DESCRIPCION };
