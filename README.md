@@ -6,6 +6,8 @@ Aplicación web para reportar y dar seguimiento a las averías de las aulas y es
 
 ## Qué hace
 - Registrar una avería (aula, tipo, descripción) y verla en la lista.
+- Asignar un técnico y cambiar el estado: Reportada → Asignada → En reparación → Cerrada.
+- Filtrar la lista por estado.
 
 ## Tecnologías
 - Node.js 22 LTS (ver `.nvmrc`)
@@ -66,7 +68,7 @@ Abra <http://localhost:3000>. Verá la lista con las averías de prueba.
 ```
 npm test
 ```
-Resultado esperado: **10 pruebas aprobadas**. Las pruebas no necesitan la base de datos.
+Resultado esperado: **18 pruebas aprobadas**. Las pruebas no necesitan la base de datos.
 
 También se ejecutan solas en GitHub Actions con cada `push` y cada pull request.
 

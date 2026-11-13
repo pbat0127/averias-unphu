@@ -6,3 +6,4 @@
 |---|---|---|---|---|
 | (ejemplo) | Integrante 2 | Diseño de la tabla de averías | El estado será una lista fija de 4 valores | Crear los scripts SQL |
 | (ejemplo) | Integrante 3 | Formulario de registro | Las tildes se guardaban mal; se usa `utf8mb4` en la base de datos y en la conexión | Probar con los datos de prueba |
+| (ejemplo) | Integrante 1 | Revisión del avance | El flujo de estados quedó listo; se aprueba el cambio CR-01 (foto) | Empezar la rama `feature/foto-averia` |

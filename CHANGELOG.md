@@ -3,6 +3,13 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Las versiones siguen [Versionado Semántico](https://semver.org/lang/es/): MAYOR.MENOR.PARCHE.
 
+## [0.2.0]
+### Agregado
+- Flujo de estados Reportada → Asignada → En reparación → Cerrada (RF-02, #2).
+- Asignación de técnico (RF-03, #2).
+- Filtro de la lista por estado.
+- Casos de prueba CP-04.
+
 ## [0.1.0]
 ### Agregado
 - Registro y lista de averías (RF-01, #1).
