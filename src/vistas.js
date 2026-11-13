@@ -32,7 +32,21 @@ ${contenido}
 </html>`;
 }
 
-function lista(averias) {
+function lista(averias, { tecnicos = [], estados = [], filtro = null, error = null } = {}) {
+  const enlaceFiltro = (valor, texto) => valor === filtro
+    ? `<strong>${esc(texto)}</strong>`
+    : `<a href="${valor ? `/?estado=${encodeURIComponent(valor)}` : '/'}">${esc(texto)}</a>`;
+  const filtros = [enlaceFiltro(null, 'Todas'), ...estados.map(e => enlaceFiltro(e, e))].join(' · ');
+  const opcionesTecnico = tecnicos.map(t => `<option value="${esc(t.id)}">${esc(t.nombre)}</option>`).join('');
+
+  // Un botón por cada estado al que se puede pasar. Para "Asignada" hay que elegir técnico.
+  const acciones = a => a.siguientes.map(sig => `
+      <form method="post" action="/averias/${esc(a.id)}/estado">
+        <input type="hidden" name="estado" value="${esc(sig)}">
+        ${sig === 'Asignada' ? `<select name="tecnico_id" required><option value="">Técnico…</option>${opcionesTecnico}</select>` : ''}
+        <button type="submit">Pasar a ${esc(sig)}</button>
+      </form>`).join('') || '—';
+
   const filas = averias.map(a => `
   <tr>
     <td>${esc(a.id)}</td>
@@ -40,12 +54,17 @@ function lista(averias) {
     <td>${esc(a.tipo)}</td>
     <td>${esc(a.descripcion)}</td>
     <td><span class="estado">${esc(a.estado)}</span></td>
+    <td>${esc(a.tecnico ?? '—')}</td>
+    <td>${acciones(a)}</td>
   </tr>`).join('');
+
   return layout('Averías', `
 <p><a href="/averias/nueva">+ Reportar una avería</a></p>
+<p>Filtrar: ${filtros}</p>
+${error ? `<div class="errores">${esc(error)}</div>` : ''}
 <table>
-  <tr><th>#</th><th>Aula</th><th>Tipo</th><th>Descripción</th><th>Estado</th></tr>
-  ${filas || '<tr><td colspan="5">No hay averías registradas.</td></tr>'}
+  <tr><th>#</th><th>Aula</th><th>Tipo</th><th>Descripción</th><th>Estado</th><th>Técnico</th><th>Acción</th></tr>
+  ${filas || '<tr><td colspan="7">No hay averías con ese filtro.</td></tr>'}
 </table>`);
 }
 
