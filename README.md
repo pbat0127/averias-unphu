@@ -44,6 +44,14 @@ dotnet run --project src/AveriasUnphu.Web
 ```
 Abra http://localhost:5080.
 
+Si su SQL Server no es `localhost` (por ejemplo, SQL Server Express), cambie la cadena de conexión
+`AveriasUnphu` en `src/AveriasUnphu.Web/appsettings.json`, por ejemplo `Server=localhost\\SQLEXPRESS;...`.
+
+### Cómo se usa
+1. **Reportar avería** (`/`): formulario para reportar una avería.
+2. **Bandeja de mantenimiento** (`/bandeja.html`): lista las solicitudes por prioridad, con filtros por estado,
+   aula y equipo. Los botones **Iniciar reparación** y **Marcar resuelta** avanzan el estado.
+
 ## API
 | Método y ruta | Qué hace |
 |---|---|

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bandeja de mantenimiento · Averías UNPHU</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="encabezado">
+    <div class="encabezado__contenido">
+      <div class="marca">Averías UNPHU<small>Reporte y seguimiento de averías en aulas y laboratorios</small></div>
+      <nav class="navegacion" aria-label="Secciones">
+        <a href="index.html">Reportar avería</a>
+        <a href="bandeja.html" aria-current="page">Bandeja de mantenimiento</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>Bandeja de seguimiento</h1>
+    <p class="subtitulo">Perfil Mantenimiento · Solicitudes ordenadas por prioridad y, dentro de cada una, de la más antigua a la más nueva.</p>
+
+    <div id="mensaje" class="mensaje" role="status" hidden></div>
+
+    <section class="resumen" aria-label="Resumen de solicitudes activas">
+      <div class="resumen__item"><span class="resumen__numero" id="total-alta">–</span><span class="etiqueta prioridad-Alta">Alta</span></div>
+      <div class="resumen__item"><span class="resumen__numero" id="total-media">–</span><span class="etiqueta prioridad-Media">Media</span></div>
+      <div class="resumen__item"><span class="resumen__numero" id="total-baja">–</span><span class="etiqueta prioridad-Baja">Baja</span></div>
+      <div class="resumen__item"><span class="resumen__numero" id="total-proceso">–</span><span class="etiqueta estado-En-proceso">En proceso</span></div>
+    </section>
+
+    <form id="filtros" class="tarjeta filtros" aria-label="Filtros">
+      <div class="campo">
+        <label for="filtro-estado">Estado</label>
+        <select id="filtro-estado">
+          <option value="activas" selected>Activas (Pendiente y En proceso)</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="En proceso">En proceso</option>
+          <option value="Resuelta">Resuelta</option>
+          <option value="">Todas</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="filtro-aula">Aula o laboratorio</label>
+        <select id="filtro-aula"><option value="">Todas</option></select>
+      </div>
+      <div class="campo">
+        <label for="filtro-categoria">Equipo</label>
+        <select id="filtro-categoria"><option value="">Todos</option></select>
+      </div>
+      <div class="campo filtros__accion">
+        <button type="reset" class="boton-secundario">Quitar filtros</button>
+      </div>
+    </form>
+
+    <div class="tarjeta tarjeta--tabla">
+      <table class="tabla-solicitudes">
+        <thead>
+          <tr>
+            <th scope="col">N.º</th>
+            <th scope="col">Prioridad</th>
+            <th scope="col">Aula</th>
+            <th scope="col">Equipo</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Reportada</th>
+            <th scope="col">Estado</th>
+            <th scope="col"><span class="oculto-visual">Acción</span></th>
+          </tr>
+        </thead>
+        <tbody id="solicitudes">
+          <tr><td colspan="8" class="vacio">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/bandeja.js"></script>
+</body>
+</html>
