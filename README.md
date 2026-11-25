@@ -20,6 +20,13 @@ cd averias-unphu
 dotnet restore
 ```
 
+## Base de datos
+Ejecute los scripts de la carpeta `db` en orden, desde SSMS (abrir y pulsar F5) o con `sqlcmd`:
+```
+sqlcmd -S localhost -E -i db/01_esquema.sql
+```
+Con SQL Server Express use `-S localhost\SQLEXPRESS`. El modelo está explicado en [docs/modelo-de-datos.md](docs/modelo-de-datos.md).
+
 ## Ejecución
 ```
 dotnet run --project src/AveriasUnphu.Web
@@ -33,6 +40,8 @@ dotnet test
 
 ## Estructura
 ```
+db/                       Scripts de SQL Server, en el orden en que se ejecutan
+docs/                     Modelo de datos y documentación
 src/AveriasUnphu.Web/     Aplicación web (API y páginas en wwwroot)
 tests/AveriasUnphu.Pruebas/  Pruebas automáticas (xUnit)
 .github/workflows/        Pruebas en GitHub Actions
