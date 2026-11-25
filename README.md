@@ -25,13 +25,18 @@ Ejecute los scripts de la carpeta `db` en orden, desde SSMS (abrir y pulsar F5) 
 ```
 sqlcmd -S localhost -E -i db/01_esquema.sql
 sqlcmd -S localhost -E -i db/02_catalogos.sql
+sqlcmd -S localhost -E -i db/03_datos_prueba.sql
+sqlcmd -S localhost -E -i db/04_consulta_solicitudes_activas.sql
 ```
 | Script | Qué hace |
 |---|---|
 | `01_esquema.sql` | Crea la base de datos `AveriasUnphu` y sus tablas. |
 | `02_catalogos.sql` | Carga aulas, categorías de equipo y usuarios de prueba. |
+| `03_datos_prueba.sql` | Carga solicitudes de prueba (borra las que haya). Solo para desarrollo. |
+| `04_consulta_solicitudes_activas.sql` | Consulta de solicitudes activas por aula y categoría (base de la validación de duplicados). No modifica datos. |
 
-Con SQL Server Express use `-S localhost\SQLEXPRESS`. El modelo está explicado en [docs/modelo-de-datos.md](docs/modelo-de-datos.md).
+Con SQL Server Express use `-S localhost\SQLEXPRESS`. El modelo está explicado en [docs/modelo-de-datos.md](docs/modelo-de-datos.md)
+y las reglas de duplicidad en [docs/reglas-de-negocio.md](docs/reglas-de-negocio.md).
 
 ## Ejecución
 ```
