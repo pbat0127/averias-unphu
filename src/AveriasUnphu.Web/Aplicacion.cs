@@ -1,3 +1,6 @@
+using AveriasUnphu.Web.Api;
+using AveriasUnphu.Web.Datos;
+
 namespace AveriasUnphu.Web;
 
 /// <summary>
@@ -14,6 +17,16 @@ public static class Aplicacion
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        if (registrarDatos is null)
+        {
+            builder.Services.AddSingleton<ConexionSql>();
+            builder.Services.AddScoped<IRepositorioCatalogos, RepositorioCatalogosSql>();
+        }
+        else
+        {
+            registrarDatos(builder.Services);
+        }
+
         builder.Services.AddProblemDetails();
 
         var app = builder.Build();
@@ -23,6 +36,7 @@ public static class Aplicacion
         app.UseStaticFiles();
 
         app.MapGet("/salud", () => Results.Ok(new { estado = "activo" }));
+        app.MapApiCatalogos();
 
         return app;
     }

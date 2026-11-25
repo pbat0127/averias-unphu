@@ -24,7 +24,13 @@ dotnet restore
 Ejecute los scripts de la carpeta `db` en orden, desde SSMS (abrir y pulsar F5) o con `sqlcmd`:
 ```
 sqlcmd -S localhost -E -i db/01_esquema.sql
+sqlcmd -S localhost -E -i db/02_catalogos.sql
 ```
+| Script | Qué hace |
+|---|---|
+| `01_esquema.sql` | Crea la base de datos `AveriasUnphu` y sus tablas. |
+| `02_catalogos.sql` | Carga aulas, categorías de equipo y usuarios de prueba. |
+
 Con SQL Server Express use `-S localhost\SQLEXPRESS`. El modelo está explicado en [docs/modelo-de-datos.md](docs/modelo-de-datos.md).
 
 ## Ejecución
