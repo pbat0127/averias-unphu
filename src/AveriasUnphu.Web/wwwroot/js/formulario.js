@@ -1,5 +1,8 @@
-// Formulario de reporte de averías (tarea 2.3).
-// Carga los catálogos desde la API y valida los campos antes de enviar.
+// Formulario de reporte de averías.
+// Tarea 2.3: carga los catálogos y valida los campos.
+// Tarea 2.5: se conecta con la validación de duplicados del backend:
+//   - al elegir aula y categoría, avisa si ya hay una solicitud activa (y desactiva el envío);
+//   - al enviar, registra la avería o muestra la vista de bloqueo con la solicitud vigente.
 (() => {
   const formulario = document.getElementById('formulario-reporte');
   const selectUsuario = document.getElementById('usuario');
@@ -8,6 +11,8 @@
   const descripcion = document.getElementById('descripcion');
   const contador = document.getElementById('contador');
   const mensaje = document.getElementById('mensaje');
+  const botonEnviar = document.getElementById('boton-enviar');
+  let consultaActual = 0;
 
   function mostrarMensaje(tipo, titulo, texto) {
     mensaje.className = `mensaje mensaje-${tipo}`;
@@ -84,10 +89,53 @@
     return resultados.every(Boolean);
   }
 
-  // El envío a la API se conecta en la tarea 2.5.
+  function permitirEnvio(permitido) {
+    botonEnviar.disabled = !permitido;
+  }
+
+  // Pregunta al backend si ya hay una solicitud activa para el aula y la categoría elegidas.
+  async function revisarDuplicado() {
+    const aulaId = Number(selectAula.value);
+    const categoriaId = Number(selectCategoria.value);
+    const consulta = ++consultaActual;
+    VistaBloqueo.ocultar();
+    permitirEnvio(true);
+    if (!aulaId || !categoriaId) return;
+
+    try {
+      const r = await Api.obtener(`/api/solicitudes/validar?aulaId=${aulaId}&categoriaId=${categoriaId}`);
+      if (consulta !== consultaActual) return; // el usuario ya cambió la selección
+      if (r.duplicada) {
+        VistaBloqueo.alertar(r.vigente);
+        permitirEnvio(false);
+      }
+    } catch {
+      // Si la consulta falla, el backend vuelve a validar al enviar.
+    }
+  }
+
   async function enviarReporte(datos) {
-    console.info('Reporte listo para enviar:', datos);
-    mostrarMensaje('aviso', 'Formulario completo', 'Los datos son válidos. El envío al servidor se conecta en la tarea 2.5.');
+    permitirEnvio(false);
+    try {
+      const r = await Api.enviar('/api/solicitudes', 'POST', datos);
+      if (r.estado === 201) {
+        const s = r.datos;
+        formulario.reset();
+        mostrarMensaje('exito', `Solicitud #${s.id} registrada`,
+          `${s.aula} · ${s.categoria}. Estado: ${s.estado}. Prioridad asignada: ${s.prioridad}.`);
+      } else if (r.estado === 409) {
+        formulario.hidden = true;
+        VistaBloqueo.bloquear(r.datos.vigente);
+      } else if (r.estado === 400) {
+        mostrarMensaje('error', 'Revise los datos del reporte', r.datos.errores.join(' '));
+      } else {
+        mostrarMensaje('error', 'No se pudo registrar la avería', `El servidor respondió con el error ${r.estado}.`);
+      }
+    } catch (error) {
+      mostrarMensaje('error', 'No se pudo registrar la avería', error.message);
+    } finally {
+      permitirEnvio(true);
+    }
   }
 
   formulario.addEventListener('submit', async (evento) => {
@@ -101,7 +149,19 @@
   formulario.addEventListener('reset', () => {
     ocultarMensaje();
     formulario.querySelectorAll('.invalido').forEach((c) => c.classList.remove('invalido'));
+    VistaBloqueo.ocultar();
+    permitirEnvio(true);
     setTimeout(() => { contador.textContent = '0'; });
+  });
+
+  selectAula.addEventListener('change', revisarDuplicado);
+  selectCategoria.addEventListener('change', revisarDuplicado);
+
+  // Desde la vista de bloqueo: volver al formulario vacío.
+  VistaBloqueo.alPedirOtraAveria(() => {
+    formulario.reset();
+    formulario.hidden = false;
+    selectAula.focus();
   });
 
   descripcion.addEventListener('input', () => {

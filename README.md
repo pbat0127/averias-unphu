@@ -28,6 +28,7 @@ sqlcmd -S localhost -E -i db/02_catalogos.sql
 sqlcmd -S localhost -E -i db/03_datos_prueba.sql
 sqlcmd -S localhost -E -i db/04_consulta_solicitudes_activas.sql
 ```
+
 | Script | Qué hace |
 |---|---|
 | `01_esquema.sql` | Crea la base de datos `AveriasUnphu` y sus tablas. |
@@ -36,7 +37,7 @@ sqlcmd -S localhost -E -i db/04_consulta_solicitudes_activas.sql
 | `04_consulta_solicitudes_activas.sql` | Consulta de solicitudes activas por aula y categoría (base de la validación de duplicados). No modifica datos. |
 
 Con SQL Server Express use `-S localhost\SQLEXPRESS`. El modelo está explicado en [docs/modelo-de-datos.md](docs/modelo-de-datos.md)
-y las reglas de duplicidad en [docs/reglas-de-negocio.md](docs/reglas-de-negocio.md).
+y las reglas de duplicidad, prioridad y estados en [docs/reglas-de-negocio.md](docs/reglas-de-negocio.md).
 
 ## Ejecución
 ```
@@ -45,11 +46,15 @@ dotnet run --project src/AveriasUnphu.Web
 Abra http://localhost:5080.
 
 Si su SQL Server no es `localhost` (por ejemplo, SQL Server Express), cambie la cadena de conexión
-`AveriasUnphu` en `src/AveriasUnphu.Web/appsettings.json`, por ejemplo `Server=localhost\\SQLEXPRESS;...`.
+`AveriasUnphu` en `src/AveriasUnphu.Web/appsettings.json`, por ejemplo `Server=localhost\\SQLEXPRESS;...`
+(en JSON la barra invertida se escribe doble).
 
 ### Cómo se usa
-1. **Reportar avería** (`/`): formulario para reportar una avería.
-2. **Bandeja de mantenimiento** (`/bandeja.html`): lista las solicitudes por prioridad, con filtros por estado,
+1. **Reportar avería:** elija quién reporta, el aula, la categoría del equipo, el impacto en la clase y describa la avería.
+   El sistema asigna la prioridad (Alta, Media o Baja) según el equipo y el impacto.
+2. Si ya hay una solicitud **activa** (Pendiente o En proceso) para esa aula y categoría, el formulario lo avisa
+   y no deja enviar. Si el envío llega al servidor igual, se muestra la vista de bloqueo con la solicitud vigente.
+3. **Bandeja de mantenimiento** (`/bandeja.html`): lista las solicitudes por prioridad, con filtros por estado,
    aula y equipo. Los botones **Iniciar reparación** y **Marcar resuelta** avanzan el estado.
 
 ## API
@@ -58,6 +63,8 @@ Si su SQL Server no es `localhost` (por ejemplo, SQL Server Express), cambie la 
 | `GET /api/catalogos/aulas` | Aulas y laboratorios. |
 | `GET /api/catalogos/categorias` | Categorías de equipo con su criticidad. |
 | `GET /api/catalogos/usuarios?perfil=Reportante` | Usuarios, filtrados por perfil. |
+| `GET /api/solicitudes/validar?aulaId=1&categoriaId=1` | Dice si ya hay una solicitud activa para esa aula y categoría. |
+| `POST /api/solicitudes` | Registra una avería. Valida duplicados antes de guardar: **201** si se registró, **409** con la solicitud vigente si es duplicado, **400** si faltan datos. |
 | `GET /api/solicitudes/{id}` | Una solicitud por su número. |
 | `GET /api/solicitudes?estado=activas&aulaId=1&categoriaId=1` | Bandeja: solicitudes ordenadas por prioridad (Alta, Media, Baja) y antigüedad. `estado` puede ser `activas`, `Pendiente`, `En proceso` o `Resuelta`; sin filtros, todas. |
 | `PATCH /api/solicitudes/{id}/estado` | Avanza el estado un paso: `{ "estado": "En proceso" }` o `{ "estado": "Resuelta" }`. |
@@ -66,11 +73,16 @@ Si su SQL Server no es `localhost` (por ejemplo, SQL Server Express), cambie la 
 ```
 dotnet test
 ```
+Las pruebas no necesitan SQL Server: usan datos en memoria que se comportan como la base de datos.
+Cubren los casos funcionales P-01 a P-04, las reglas de duplicidad, la prioridad y los cambios de estado.
+También se ejecutan en GitHub Actions en cada push y pull request.
+
+Para recopilar las evidencias de cada tarea, siga [docs/evidencias.md](docs/evidencias.md).
 
 ## Estructura
 ```
 db/                       Scripts de SQL Server, en el orden en que se ejecutan
-docs/                     Modelo de datos y documentación
+docs/                     Modelo de datos, reglas de negocio y guía de evidencias
 src/AveriasUnphu.Web/     Aplicación web (API y páginas en wwwroot)
 tests/AveriasUnphu.Pruebas/  Pruebas automáticas (xUnit)
 .github/workflows/        Pruebas en GitHub Actions

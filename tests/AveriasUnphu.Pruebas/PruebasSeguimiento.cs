@@ -109,4 +109,20 @@ public class PruebasSeguimiento
         Assert.Equal(HttpStatusCode.NotFound, (await CambiarEstado(servidor, 999, Estados.EnProceso)).StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, (await CambiarEstado(servidor, s.Id, "Cerrada")).StatusCode);
     }
+
+    [Fact]
+    public async Task Al_resolverla_la_averia_se_puede_volver_a_reportar()
+    {
+        await using var servidor = await ServidorDePrueba.IniciarAsync();
+        var reporte = new { aulaId = A101.Id, categoriaId = Proyector.Id, usuarioId = Docente.Id,
+                            impacto = Impactos.ImpideLaClase, descripcion = "El proyector no enciende." };
+        var primera = await (await servidor.Cliente.PostAsJsonAsync("/api/solicitudes", reporte)).Content.ReadFromJsonAsync<Solicitud>();
+        await CambiarEstado(servidor, primera!.Id, Estados.EnProceso);
+        Assert.Equal(HttpStatusCode.Conflict, (await servidor.Cliente.PostAsJsonAsync("/api/solicitudes", reporte)).StatusCode);
+
+        await CambiarEstado(servidor, primera.Id, Estados.Resuelta);
+        var reapertura = await servidor.Cliente.PostAsJsonAsync("/api/solicitudes", reporte);
+
+        Assert.Equal(HttpStatusCode.Created, reapertura.StatusCode);
+    }
 }
