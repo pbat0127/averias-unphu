@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reportar avería · Averías UNPHU</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="encabezado">
+    <div class="encabezado__contenido">
+      <div class="marca">Averías UNPHU<small>Reporte y seguimiento de averías en aulas y laboratorios</small></div>
+      <nav class="navegacion" aria-label="Secciones">
+        <a href="index.html" aria-current="page">Reportar avería</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="angosto">
+    <h1>Reportar una avería</h1>
+    <p class="subtitulo">Indique dónde está la avería, qué equipo falla y cómo afecta la clase.</p>
+
+    <div id="mensaje" class="mensaje" role="status" hidden></div>
+
+    <form id="formulario-reporte" class="tarjeta" novalidate>
+      <div class="campo" id="campo-usuario">
+        <label for="usuario">Reportado por</label>
+        <select id="usuario" name="usuarioId" required>
+          <option value="">Cargando…</option>
+        </select>
+        <p class="error-campo">Seleccione quién reporta la avería.</p>
+      </div>
+
+      <div class="fila">
+        <div class="campo" id="campo-aula">
+          <label for="aula">Aula o laboratorio</label>
+          <select id="aula" name="aulaId" required>
+            <option value="">Cargando…</option>
+          </select>
+          <p class="error-campo">Seleccione el aula o laboratorio.</p>
+        </div>
+
+        <div class="campo" id="campo-categoria">
+          <label for="categoria">Categoría de equipo</label>
+          <select id="categoria" name="categoriaId" required>
+            <option value="">Cargando…</option>
+          </select>
+          <p class="error-campo">Seleccione la categoría del equipo.</p>
+        </div>
+      </div>
+
+      <fieldset class="campo" id="campo-impacto">
+        <legend>Impacto en la clase</legend>
+        <div class="opciones-impacto">
+          <label class="opcion">
+            <input type="radio" name="impacto" value="Impide la clase" required>
+            <div><strong>Impide la clase</strong><span>No se puede dar la clase así.</span></div>
+          </label>
+          <label class="opcion">
+            <input type="radio" name="impacto" value="Afecta parcialmente">
+            <div><strong>Afecta parcialmente</strong><span>Se puede dar, con dificultad.</span></div>
+          </label>
+          <label class="opcion">
+            <input type="radio" name="impacto" value="No afecta">
+            <div><strong>No afecta</strong><span>La clase sigue con normalidad.</span></div>
+          </label>
+        </div>
+        <p class="error-campo">Indique el impacto en la clase.</p>
+      </fieldset>
+
+      <div class="campo" id="campo-descripcion">
+        <label for="descripcion">Descripción de la avería</label>
+        <textarea id="descripcion" name="descripcion" maxlength="500" required
+                  placeholder="Ejemplo: el proyector no enciende aunque está conectado."></textarea>
+        <div class="contador"><span id="contador">0</span> / 500</div>
+        <p class="error-campo">Describa la avería.</p>
+      </div>
+
+      <div class="acciones">
+        <button type="submit" class="boton-principal" id="boton-enviar">Enviar reporte</button>
+        <button type="reset" class="boton-secundario">Limpiar</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/formulario.js"></script>
+</body>
+</html>
