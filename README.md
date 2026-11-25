@@ -1,94 +1,73 @@
 # Sistema de Averías UNPHU
 
-Aplicación web para reportar y dar seguimiento a las averías de las aulas y espacios del campus.
-
-> Repositorio de ejemplo preparado por el Grupo 01 para la exposición de la Unidad 3 (INF-386-03).
-
-## Qué hace
-- Registrar una avería (aula, tipo, descripción) y verla en la lista.
-- Asignar un técnico y cambiar el estado: Reportada → Asignada → En reparación → Cerrada.
-- Filtrar la lista por estado.
-- Adjuntar una foto opcional (JPG o PNG, hasta 2 MB) al reportar la avería.
+Aplicación web para reportar y dar seguimiento a las averías de las aulas y laboratorios del campus.
+Proyecto Integrador INF-386-03 · Grupo 01.
 
 ## Tecnologías
-- Node.js 22 LTS (ver `.nvmrc`)
-- Express 5
-- MySQL 8.0
+- ASP.NET Core 10 (C#): API y páginas web
+- SQL Server 2019 o superior (también sirve SQL Server Express)
+- xUnit para las pruebas automáticas
 
 ## Requisitos previos
-- Node.js 22 o superior, con npm
-- MySQL 8.0 instalado y en ejecución
+- [.NET SDK 10](https://dotnet.microsoft.com/download)
+- SQL Server o SQL Server Express, con SQL Server Management Studio (SSMS) o `sqlcmd`
 - Git
 
 ## Instalación
-1. Clone el repositorio:
-   ```
-   git clone https://github.com/<usuario>/averias-unphu.git
-   cd averias-unphu
-   ```
-2. Instale las dependencias con las versiones exactas de `package-lock.json`:
-   ```
-   npm ci
-   ```
-
-## Configuración
-Copie la plantilla y complete sus datos locales:
 ```
-cp .env.example .env
+git clone https://github.com/pbat0127/averias-unphu.git
+cd averias-unphu
+dotnet restore
 ```
-
-| Variable | Ejemplo | Para qué sirve |
-|---|---|---|
-| `PORT` | `3000` | Puerto del servidor web |
-| `DB_HOST` | `localhost` | Servidor de MySQL |
-| `DB_PORT` | `3306` | Puerto de MySQL |
-| `DB_USER` | `root` | Usuario de MySQL |
-| `DB_PASSWORD` | *(su contraseña)* | Contraseña de MySQL |
-| `DB_NAME` | `averias` | Nombre de la base de datos |
-
-El archivo `.env` tiene contraseñas, por eso **no se sube** al repositorio (está en `.gitignore`).
 
 ## Base de datos
-Ejecute los scripts **en este orden**:
+Ejecute los scripts de la carpeta `db` en orden, desde SSMS (abrir y pulsar F5) o con `sqlcmd`:
 ```
-mysql -u root -p < db/01_schema.sql
-mysql -u root -p < db/02_catalogos.sql
-mysql -u root -p < db/03_datos_prueba.sql
-mysql -u root -p < db/04_foto_averia.sql
+sqlcmd -S localhost -E -i db/01_esquema.sql
+sqlcmd -S localhost -E -i db/02_catalogos.sql
+sqlcmd -S localhost -E -i db/03_datos_prueba.sql
+sqlcmd -S localhost -E -i db/04_consulta_solicitudes_activas.sql
 ```
-- En **PowerShell** use: `Get-Content db/01_schema.sql | mysql -u root -p` (repita con cada script).
-- También puede abrir cada script en **MySQL Workbench** y ejecutarlo.
-- El script `01` borra las tablas si ya existen: úselo solo en su computadora.
+| Script | Qué hace |
+|---|---|
+| `01_esquema.sql` | Crea la base de datos `AveriasUnphu` y sus tablas. |
+| `02_catalogos.sql` | Carga aulas, categorías de equipo y usuarios de prueba. |
+| `03_datos_prueba.sql` | Carga solicitudes de prueba (borra las que haya). Solo para desarrollo. |
+| `04_consulta_solicitudes_activas.sql` | Consulta de solicitudes activas por aula y categoría (base de la validación de duplicados). No modifica datos. |
+
+Con SQL Server Express use `-S localhost\SQLEXPRESS`. El modelo está explicado en [docs/modelo-de-datos.md](docs/modelo-de-datos.md)
+y las reglas de duplicidad en [docs/reglas-de-negocio.md](docs/reglas-de-negocio.md).
 
 ## Ejecución
 ```
-npm run dev
+dotnet run --project src/AveriasUnphu.Web
 ```
-Abra <http://localhost:3000>. Verá la lista con las averías de prueba.
+Abra http://localhost:5080.
+
+## API
+| Método y ruta | Qué hace |
+|---|---|
+| `GET /api/catalogos/aulas` | Aulas y laboratorios. |
+| `GET /api/catalogos/categorias` | Categorías de equipo con su criticidad. |
+| `GET /api/catalogos/usuarios?perfil=Reportante` | Usuarios, filtrados por perfil. |
+| `GET /api/solicitudes/{id}` | Una solicitud por su número. |
+| `GET /api/solicitudes?estado=activas&aulaId=1&categoriaId=1` | Bandeja: solicitudes ordenadas por prioridad (Alta, Media, Baja) y antigüedad. `estado` puede ser `activas`, `Pendiente`, `En proceso` o `Resuelta`; sin filtros, todas. |
+| `PATCH /api/solicitudes/{id}/estado` | Avanza el estado un paso: `{ "estado": "En proceso" }` o `{ "estado": "Resuelta" }`. |
 
 ## Pruebas
 ```
-npm test
+dotnet test
 ```
-Resultado esperado: **24 pruebas aprobadas**. Las pruebas no necesitan la base de datos.
-
-También se ejecutan solas en GitHub Actions con cada `push` y cada pull request.
 
 ## Estructura
 ```
-db/      scripts SQL numerados, en el orden en que se ejecutan
-docs/    bitácora, decisiones, cambios y matriz de trazabilidad
-src/     código de la aplicación
-tests/   pruebas automáticas
-uploads/  fotos subidas (no se versionan)
+db/                       Scripts de SQL Server, en el orden en que se ejecutan
+docs/                     Modelo de datos y documentación
+src/AveriasUnphu.Web/     Aplicación web (API y páginas en wwwroot)
+tests/AveriasUnphu.Pruebas/  Pruebas automáticas (xUnit)
+.github/workflows/        Pruebas en GitHub Actions
 ```
 
-## Documentación
-- [Bitácora](docs/bitacora.md)
-- [Decisiones técnicas (ADR)](docs/decisiones/)
-- [Matriz de trazabilidad](docs/trazabilidad.md)
-- [Solicitudes de cambio](docs/cambios.md)
-- [Registro de cambios por versión](CHANGELOG.md)
-
-## Autores
-Grupo 01 — Andrea Masini - Daniel Caamaño - Pedro Batista
+## Historial
+Las versiones `v0.1` a `v0.3` son el prototipo en Node.js que se usó en la exposición de la Unidad 3.
+A partir de aquí el proyecto continúa en ASP.NET Core y SQL Server.
