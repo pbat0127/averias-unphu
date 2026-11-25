@@ -48,8 +48,10 @@ Si su SQL Server no es `localhost` (por ejemplo, SQL Server Express), cambie la 
 `AveriasUnphu` en `src/AveriasUnphu.Web/appsettings.json`, por ejemplo `Server=localhost\\SQLEXPRESS;...`.
 
 ### Cómo se usa
-1. **Reportar avería** (`/`): formulario para reportar una avería.
-2. **Bandeja de mantenimiento** (`/bandeja.html`): lista las solicitudes por prioridad, con filtros por estado,
+1. **Reportar avería:** elija quién reporta, el aula, la categoría del equipo, el impacto en la clase y describa la avería.
+2. Si ya hay una solicitud **activa** (Pendiente o En proceso) para esa aula y categoría, el formulario lo avisa
+   y no deja enviar. Si el envío llega al servidor igual, se muestra la vista de bloqueo con la solicitud vigente.
+3. **Bandeja de mantenimiento** (`/bandeja.html`): lista las solicitudes por prioridad, con filtros por estado,
    aula y equipo. Los botones **Iniciar reparación** y **Marcar resuelta** avanzan el estado.
 
 ## API
