@@ -184,3 +184,63 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .estado-Resuelta { background: var(--baja-fondo); color: var(--baja); }
 
 .oculto { display: none !important; }
+
+/* Bandeja de seguimiento */
+.resumen { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 640px) { .resumen { grid-template-columns: repeat(2, 1fr); } }
+.resumen__item {
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.resumen__numero { font-size: 1.6rem; font-weight: 700; }
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1.3fr 1.3fr 1fr auto;
+  gap: 14px;
+  align-items: end;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.filtros .campo { margin-bottom: 0; }
+@media (max-width: 760px) { .filtros { grid-template-columns: 1fr; } }
+
+.tarjeta--tabla { padding: 0; overflow: hidden; }
+.tabla-solicitudes { width: 100%; border-collapse: collapse; font-size: .94rem; }
+.tabla-solicitudes th {
+  text-align: left;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--texto-suave);
+  background: #f8fafb;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--borde);
+}
+.tabla-solicitudes td { padding: 12px; border-bottom: 1px solid #eceff3; vertical-align: top; }
+.tabla-solicitudes tbody tr:last-child td { border-bottom: 0; }
+.tabla-solicitudes .numero { font-weight: 700; white-space: nowrap; }
+.tabla-solicitudes .descripcion { max-width: 280px; }
+.tabla-solicitudes .accion { text-align: right; white-space: nowrap; }
+.impacto { display: block; color: var(--texto-suave); font-size: .82rem; margin-top: 2px; }
+.vacio { text-align: center; color: var(--texto-suave); padding: 28px 12px !important; }
+.oculto-visual { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* En pantallas pequeñas, cada solicitud se muestra como una tarjeta */
+@media (max-width: 760px) {
+  .tabla-solicitudes thead { display: none; }
+  .tabla-solicitudes, .tabla-solicitudes tbody, .tabla-solicitudes tr, .tabla-solicitudes td { display: block; width: 100%; }
+  .tabla-solicitudes tr { padding: 12px 14px; border-bottom: 1px solid var(--borde); }
+  .tabla-solicitudes td { border: 0; padding: 4px 0; display: grid; grid-template-columns: 96px 1fr; gap: 8px; justify-items: start; align-items: center; }
+  .tabla-solicitudes td::before { content: attr(data-etiqueta); color: var(--texto-suave); font-size: .82rem; }
+  .tabla-solicitudes td.vacio { display: block; }
+  .tabla-solicitudes td.vacio::before { content: none; }
+  .tabla-solicitudes .accion { text-align: left; }
+  .tabla-solicitudes .descripcion { max-width: none; }
+}
