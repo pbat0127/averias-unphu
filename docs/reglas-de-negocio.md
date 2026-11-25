@@ -32,3 +32,9 @@ Notas:
 Pendiente  →  En proceso  →  Resuelta
 ```
 Solo se avanza un paso a la vez. Una solicitud Resuelta no se reabre: si la avería vuelve, se reporta una nueva (RD-04).
+Lo controla `ServicioSeguimiento.CambiarEstadoAsync` (tarea 3.2): un salto como Pendiente → Resuelta responde **400**.
+
+## Orden de la bandeja
+
+Las solicitudes se ordenan por **prioridad** (Alta, Media, Baja) y, dentro de la misma prioridad,
+de la **más antigua a la más nueva**, para atender primero lo urgente y no dejar olvidado lo que lleva más tiempo esperando.

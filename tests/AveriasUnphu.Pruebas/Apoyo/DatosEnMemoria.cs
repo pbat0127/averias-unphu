@@ -11,10 +11,14 @@ namespace AveriasUnphu.Pruebas.Apoyo;
 public sealed class DatosEnMemoria
 {
     public CatalogosEnMemoria Catalogos { get; } = new();
+    public SolicitudesEnMemoria Solicitudes { get; }
+
+    public DatosEnMemoria() => Solicitudes = new SolicitudesEnMemoria(Catalogos);
 
     public void Registrar(IServiceCollection servicios)
     {
         servicios.AddSingleton<IRepositorioCatalogos>(Catalogos);
+        servicios.AddSingleton<IRepositorioSolicitudes>(Solicitudes);
     }
 }
 

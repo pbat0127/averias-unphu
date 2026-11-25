@@ -53,4 +53,13 @@ internal static class ComandoSql
 
     public static int Entero(this DbDataReader lector, string columna) =>
         lector.GetInt32(lector.GetOrdinal(columna));
+
+    public static DateTime Fecha(this DbDataReader lector, string columna) =>
+        lector.GetDateTime(lector.GetOrdinal(columna));
+
+    public static DateTime? FechaOpcional(this DbDataReader lector, string columna)
+    {
+        var i = lector.GetOrdinal(columna);
+        return lector.IsDBNull(i) ? null : lector.GetDateTime(i);
+    }
 }

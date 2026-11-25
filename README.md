@@ -44,6 +44,16 @@ dotnet run --project src/AveriasUnphu.Web
 ```
 Abra http://localhost:5080.
 
+## API
+| Método y ruta | Qué hace |
+|---|---|
+| `GET /api/catalogos/aulas` | Aulas y laboratorios. |
+| `GET /api/catalogos/categorias` | Categorías de equipo con su criticidad. |
+| `GET /api/catalogos/usuarios?perfil=Reportante` | Usuarios, filtrados por perfil. |
+| `GET /api/solicitudes/{id}` | Una solicitud por su número. |
+| `GET /api/solicitudes?estado=activas&aulaId=1&categoriaId=1` | Bandeja: solicitudes ordenadas por prioridad (Alta, Media, Baja) y antigüedad. `estado` puede ser `activas`, `Pendiente`, `En proceso` o `Resuelta`; sin filtros, todas. |
+| `PATCH /api/solicitudes/{id}/estado` | Avanza el estado un paso: `{ "estado": "En proceso" }` o `{ "estado": "Resuelta" }`. |
+
 ## Pruebas
 ```
 dotnet test
