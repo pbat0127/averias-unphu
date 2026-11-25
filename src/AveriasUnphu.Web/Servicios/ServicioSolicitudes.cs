@@ -49,11 +49,11 @@ public sealed class ServicioSolicitudes(IRepositorioSolicitudes solicitudes, IRe
         var vigente = await solicitudes.BuscarActivaAsync(aula!.Id, categoria!.Id);
         if (vigente is not null) return ResultadoRegistro.Duplicada(vigente);
 
-        // 4. Guardar
+        // 4. Prioridad automática según la criticidad del equipo y el impacto en la clase (tarea 3.1), y guardar
         var nueva = new SolicitudParaGuardar(
             aula.Id, categoria.Id, usuario!.Id,
             datos.Descripcion!.Trim(), datos.Impacto!,
-            AsignarPrioridad(categoria, datos.Impacto!));
+            ReglasPrioridad.Calcular(categoria.Criticidad, datos.Impacto!));
 
         int id;
         try
@@ -72,7 +72,4 @@ public sealed class ServicioSolicitudes(IRepositorioSolicitudes solicitudes, IRe
             ?? throw new InvalidOperationException($"No se encontró la solicitud {id} recién guardada.");
         return ResultadoRegistro.Registrada(guardada);
     }
-
-    // La prioridad automática (Alta, Media o Baja) se implementa en la tarea 3.1.
-    private static string AsignarPrioridad(CategoriaEquipo categoria, string impacto) => Prioridades.Media;
 }
