@@ -163,6 +163,7 @@ button:disabled { opacity: .55; cursor: not-allowed; }
   padding: 14px 16px;
   margin: 0 0 14px;
 }
+.datos-solicitud:last-child { margin-bottom: 0; }
 .datos-solicitud dt { color: var(--texto-suave); }
 .datos-solicitud dd { margin: 0; font-weight: 600; }
 
