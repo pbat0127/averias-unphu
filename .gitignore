@@ -1,15 +1,18 @@
-# Dependencias (se instalan con npm ci)
-node_modules/
+# Resultados de compilación de .NET
+bin/
+obj/
 
-# Configuración local con contraseñas: se sube solo .env.example
-.env
-
-# Fotos subidas por los usuarios
-uploads/*
-!uploads/.gitkeep
-
-# Archivos del sistema y configuración local del editor (Cursor / VS Code)
-.DS_Store
-Thumbs.db
+# Configuración local de Visual Studio, Rider, VS Code y Cursor
+.vs/
+.idea/
 .vscode/
 .cursor/
+*.user
+*.suo
+
+# Resultados de pruebas
+TestResults/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

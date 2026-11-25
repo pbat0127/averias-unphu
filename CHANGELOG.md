@@ -3,6 +3,16 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Las versiones siguen [Versionado Semántico](https://semver.org/lang/es/): MAYOR.MENOR.PARCHE.
 
+## [Sin publicar]
+### Cambiado
+- El proyecto pasa de ser el prototipo en Node.js y MySQL a la versión real en ASP.NET Core 10 y SQL Server.
+- Las pruebas automáticas se ejecutan con xUnit (`dotnet test`) en GitHub Actions.
+
+### Eliminado
+- El código del prototipo en Node.js (sigue disponible en las etiquetas `v0.1`, `v0.2` y `v0.3`).
+
+## Prototipo en Node.js (etiquetas v0.1 a v0.3)
+
 ## [0.3.0]
 ### Agregado
 - Foto opcional al reportar una avería: JPG o PNG de hasta 2 MB (cambio CR-01, RF-04, #3).
