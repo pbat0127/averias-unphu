@@ -25,6 +25,8 @@ Notas:
 |---|---|
 | Base de datos | Índice único filtrado `ux_solicitudes_una_activa` (`db/01_esquema.sql`). |
 | Consulta | `db/04_consulta_solicitudes_activas.sql` (tarea 2.1). |
+| Backend | `ServicioSolicitudes.RegistrarAsync` valida antes de guardar (tarea 2.2). El endpoint `POST /api/solicitudes` responde **409** con la solicitud vigente. |
+| Pruebas | `tests/AveriasUnphu.Pruebas/PruebasRegistroDuplicados.cs` (P-01 a P-04 y RD-01 a RD-05). |
 
 ## Estados de una solicitud
 

@@ -58,6 +58,8 @@ Si su SQL Server no es `localhost` (por ejemplo, SQL Server Express), cambie la 
 | `GET /api/catalogos/aulas` | Aulas y laboratorios. |
 | `GET /api/catalogos/categorias` | Categorías de equipo con su criticidad. |
 | `GET /api/catalogos/usuarios?perfil=Reportante` | Usuarios, filtrados por perfil. |
+| `GET /api/solicitudes/validar?aulaId=1&categoriaId=1` | Dice si ya hay una solicitud activa para esa aula y categoría. |
+| `POST /api/solicitudes` | Registra una avería. Valida duplicados antes de guardar: **201** si se registró, **409** con la solicitud vigente si es duplicado, **400** si faltan datos. |
 | `GET /api/solicitudes/{id}` | Una solicitud por su número. |
 | `GET /api/solicitudes?estado=activas&aulaId=1&categoriaId=1` | Bandeja: solicitudes ordenadas por prioridad (Alta, Media, Baja) y antigüedad. `estado` puede ser `activas`, `Pendiente`, `En proceso` o `Resuelta`; sin filtros, todas. |
 | `PATCH /api/solicitudes/{id}/estado` | Avanza el estado un paso: `{ "estado": "En proceso" }` o `{ "estado": "Resuelta" }`. |

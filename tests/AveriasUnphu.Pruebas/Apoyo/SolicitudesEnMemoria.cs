@@ -3,11 +3,20 @@ using AveriasUnphu.Web.Dominio;
 
 namespace AveriasUnphu.Pruebas.Apoyo;
 
-/// <summary>Tabla de solicitudes en memoria. Se comporta como SQL Server en las pruebas.</summary>
+/// <summary>
+/// Tabla de solicitudes en memoria. Se comporta como SQL Server, incluido el índice único
+/// ux_solicitudes_una_activa: no acepta dos solicitudes activas para la misma aula y categoría.
+/// </summary>
 public sealed class SolicitudesEnMemoria(CatalogosEnMemoria catalogos) : IRepositorioSolicitudes
 {
     private readonly List<Solicitud> _filas = [];
     private readonly Lock _candado = new();
+
+    /// <summary>
+    /// Simula que otra persona registró la misma avería justo después de la búsqueda:
+    /// la próxima búsqueda no encuentra la solicitud activa, pero el índice único sí la detecta al guardar.
+    /// </summary>
+    public bool SimularEnvioSimultaneo { get; set; }
 
     public int Cantidad { get { lock (_candado) return _filas.Count; } }
 
@@ -26,6 +35,43 @@ public sealed class SolicitudesEnMemoria(CatalogosEnMemoria catalogos) : IReposi
                 estado == Estados.Resuelta ? DateTime.Now : null);
             _filas.Add(s);
             return s;
+        }
+    }
+
+    public Task<Solicitud?> BuscarActivaAsync(int aulaId, int categoriaId)
+    {
+        if (SimularEnvioSimultaneo)
+        {
+            SimularEnvioSimultaneo = false;
+            return Task.FromResult<Solicitud?>(null);
+        }
+        lock (_candado)
+        {
+            return Task.FromResult(_filas
+                .Where(s => s.AulaId == aulaId && s.CategoriaId == categoriaId && Estados.EsActivo(s.Estado))
+                .OrderByDescending(s => s.FechaReporte)
+                .FirstOrDefault());
+        }
+    }
+
+    public async Task<int> InsertarAsync(SolicitudParaGuardar nueva)
+    {
+        var aula = await catalogos.ObtenerAulaAsync(nueva.AulaId) ?? throw new InvalidOperationException("FK aula");
+        var categoria = await catalogos.ObtenerCategoriaAsync(nueva.CategoriaId) ?? throw new InvalidOperationException("FK categoría");
+        var usuario = await catalogos.ObtenerUsuarioAsync(nueva.UsuarioId) ?? throw new InvalidOperationException("FK usuario");
+
+        lock (_candado)
+        {
+            // Igual que el índice único filtrado de SQL Server
+            if (_filas.Any(s => s.AulaId == nueva.AulaId && s.CategoriaId == nueva.CategoriaId && Estados.EsActivo(s.Estado)))
+                throw new SolicitudDuplicadaException();
+
+            var s = new Solicitud(
+                _filas.Count + 1, aula.Id, $"{aula.Codigo} · {aula.Nombre}", categoria.Id, categoria.Nombre,
+                usuario.Id, usuario.Nombre, nueva.Descripcion, nueva.Impacto, nueva.Prioridad,
+                Estados.Pendiente, DateTime.Now, null, null);
+            _filas.Add(s);
+            return s.Id;
         }
     }
 

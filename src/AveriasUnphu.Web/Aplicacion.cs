@@ -29,6 +29,7 @@ public static class Aplicacion
             registrarDatos(builder.Services);
         }
 
+        builder.Services.AddScoped<ServicioSolicitudes>();
         builder.Services.AddScoped<ServicioSeguimiento>();
         builder.Services.AddProblemDetails();
 

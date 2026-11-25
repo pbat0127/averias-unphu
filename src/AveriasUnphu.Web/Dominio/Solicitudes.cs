@@ -40,6 +40,13 @@ public static class Prioridades
     public static readonly IReadOnlyList<string> Todas = [Alta, Media, Baja];
 }
 
+/// <summary>Datos que envía el formulario para reportar una avería.</summary>
+public sealed record NuevaSolicitud(int AulaId, int CategoriaId, int UsuarioId, string? Descripcion, string? Impacto);
+
+/// <summary>Solicitud ya validada, lista para guardar.</summary>
+public sealed record SolicitudParaGuardar(
+    int AulaId, int CategoriaId, int UsuarioId, string Descripcion, string Impacto, string Prioridad);
+
 /// <summary>Solicitud guardada, con los nombres de aula, categoría y usuario.</summary>
 public sealed record Solicitud(
     int Id,
@@ -62,3 +69,10 @@ public sealed record FiltroSolicitudes(string? Estado = null, int? AulaId = null
 {
     public const string SoloActivas = "activas";
 }
+
+/// <summary>
+/// La base de datos rechazó la solicitud porque ya hay otra activa para la misma aula y categoría
+/// (índice único ux_solicitudes_una_activa). Pasa cuando dos personas envían el mismo reporte a la vez.
+/// </summary>
+public sealed class SolicitudDuplicadaException(Exception? causa = null)
+    : Exception("Ya existe una solicitud activa para esta aula y categoría.", causa);
